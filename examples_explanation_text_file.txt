@@ -1,0 +1,106 @@
+Database Name: GLECOM.DB
+Number of tables:5
+Main tables: 4 ( customers, Vendor, Items, order_request)
+Derived table:1 (orders)
+
+
+There is an GLECOMM.py file having all the commands that was used in creating this database.
+
+The schema of this database is:
+
+sqlite> .schema
+CREATE TABLE customers(customer_id int auto increment primary key, name text, username text, password text, city text, state text);
+CREATE TABLE Vendor(v_id text primary key,  customer_id int, store_name text, contact_no text, constraint c_id foreign key(customer_id) references customers(customer_id));
+CREATE TABLE Items(item_id text primary key, v_id text, item text, unit_price int,
+qty int, constraint vendor_id foreign key(v_id) references Vendor(v_id));
+CREATE TABLE order_request(or_id int auto increment primary key, cust_id int, items_id text, items_quantity int,
+constraint cust_id foreign key(cust_id) references customers(customer_id), constraint items_id foreign key(items_id) references Items(item_id));
+CREATE TABLE orders(
+  or_id INT,
+  cust_id INT,
+  items_id TEXT,
+  items_quantity INT,
+  unit_price INT
+, total_amount real null);
+
+The values entered in the tables are:
+
+ table 1: customers
+
+sqlite> select * from customers;
+customer_id|name|username|password|city|state
+[(1, 'shalini', 'sh@212', 'shalini123', 'Hyderabad', 'Sindi'), 
+(2, 'Rabia', 'khan@12', 'al12345', 'Dubai', 'Saudi Arbia'), 
+(3, 'gaurav', 'gupta@12', 'bo1234', 'Mumbai', 'Maharashtra'), 
+(4, 'Vivek', 'beard@12', 'ch1234', 'Warangal', 'Pakistan'), 
+(5, 'Suruchi', 'gupta@12', 'da1234', 'Bhubaneshwar', 'Orissa'), 
+(6, 'Ankitgarg', 'garg@12', 'el1234', 'Kohima', 'Nagaland')]
+
+table 2: Vendor
+
+sqlite> select * from Vendor;
+v_id|customer_id|store_name|contact_no
+v01|1|Grandiose|988738873
+v02|2|Purplle|988738867
+v03|2|Feather|988738237
+v04|3|Crisp|988732347
+v05|3|Creamstone|988733447
+v06|4|Archies|988733457
+
+table 3: Items
+
+sqlite> select* from Items;
+item_id|v_id|item|unit_price|qty
+i01|v01|Biscuits|30|40
+i02|v02|Mango_juice|40|50
+i03|v03|Apple_juice|40|50
+i04|v03|Plastic_pots|80|50
+i05|v01|Chair|500|50
+i06|v01|Curtains|400|150
+i07|v02|CFL_Bulbs|400|100
+i08|v04|Baskets|200|100
+i09|v04|Encyclopedia_books|1000|100
+i10|v05|Speakers|500|100
+i11|v05|Hard_disk|500|100
+i12|v06|Water_bottles|200|100
+
+table 4: order_request
+
+sqlite> select * from order_request;
+or_id|cust_id|items_id|items_quantity
+1|1|i01|4
+2|2|i05|2
+3|4|i02|3
+4|3|i03|3
+5|2|i05|10
+6|5|i07|12
+7|4|i12|5
+8|2|i04|6
+9|1|i10|6
+10|3|i11|2
+
+Table 5: orders
+
+orders table is a derived table which contains or_id, cust_id, items_id, 
+items_quantity from order_request table and unit_price from 
+Items table performing inner joins.
+Then the orders table was altered by adding a column that is total_amount
+specifying the column values as null.
+Then the total_amount column was updated by setting 
+total_amount=unit_price*items_quantity
+
+sqlite> select * from orders; here by selecting you will get the total value and qty all
+or_id|cust_id|items_id|items_quantity|unit_price|total_amount
+1|1|i01|4|30|120.0
+2|2|i05|2|500|1000.0
+3|4|i02|3|40|120.0
+4|3|i03|3|40|120.0
+5|2|i05|10|500|5000.0
+6|5|i07|12|400|4800.0
+7|4|i12|5|200|1000.0
+8|2|i04|6|80|480.0
+9|1|i10|6|500|3000.0
+10|3|i11|2|500|1000.0
+
+
+ 
